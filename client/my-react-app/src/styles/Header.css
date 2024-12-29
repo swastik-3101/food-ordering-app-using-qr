@@ -1,0 +1,79 @@
+/* src/styles/Header.css */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.header-logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+}
+
+.header-nav a {
+    color: white;
+    text-decoration: none;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-search input {
+    padding: 1rem;
+    border: none;
+    border-radius: 1rem;
+    width: 300px; 
+}
+
+.theme-toggle-slider {
+    position: relative;
+}
+
+.theme-toggle-slider input {
+    width: 50px;
+    height: 25px;
+    background-color: #ccc;
+    border-radius: 25px;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.theme-toggle-slider input:checked {
+    background-color: #000000;
+}
+
+.theme-toggle-slider input:checked + label {
+    background-color: #000000;
+}
+
+.theme-toggle-slider label {
+    position: absolute;
+    top: 3px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.theme-toggle-slider input:checked + label {
+    transform: translateX(25px);
+}
