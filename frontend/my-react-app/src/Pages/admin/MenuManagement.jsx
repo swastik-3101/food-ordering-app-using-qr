@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Form, Button, Card, Row, Col, Alert } from 'react-bootstrap';
+import { useMenu } from '../../contexts/MenuContext';
 
 const MenuManagement = () => {
-  const [menuItems, setMenuItems] = useState([]);
+  const { menuItems, addMenuItem, removeMenuItem } = useMenu();
+  const [showSuccess, setShowSuccess] = useState(false);
   const [newItem, setNewItem] = useState({
     name: '',
     price: '',
@@ -10,61 +12,28 @@ const MenuManagement = () => {
     category: 'North Indian',
     image: ''
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  useEffect(() => {
-    // Load menu items from localStorage on component mount
-    const storedMenuItems = JSON.parse(localStorage.getItem('menuItems')) || [];
-    setMenuItems(storedMenuItems);
-  }, []);
-
-  // Update localStorage whenever menuItems changes
-  useEffect(() => {
-    localStorage.setItem('menuItems', JSON.stringify(menuItems));
-  }, [menuItems]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    try {
-      const newMenuItem = {
-        ...newItem,
-        id: Date.now(), // Use timestamp as unique ID
-        price: Number(newItem.price) // Convert price to number
-      };
-
-      setMenuItems([...menuItems, newMenuItem]);
-      setNewItem({
-        name: '',
-        price: '',
-        description: '',
-        category: 'North Indian',
-        image: ''
-      });
-      setSuccess('Item added successfully!');
-    } catch (err) {
-      setError('Failed to add item');
-    }
-  };
-
-  const handleDelete = (id) => {
-    try {
-      setMenuItems(menuItems.filter(item => item.id !== id));
-      setSuccess('Item deleted successfully!');
-    } catch (err) {
-      setError('Failed to delete item');
-    }
+    addMenuItem(newItem);
+    setNewItem({
+      name: '',
+      price: '',
+      description: '',
+      category: 'North Indian',
+      image: ''
+    });
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
   return (
-    <div className="container mt-4">
+    <Container className="mt-4">
       <h2>Menu Management</h2>
       
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      {showSuccess && (
+        <Alert variant="success">Item added successfully!</Alert>
+      )}
       
       <Form onSubmit={handleSubmit} className="mb-4">
         <Row>
@@ -81,13 +50,12 @@ const MenuManagement = () => {
           </Col>
           <Col md={6}>
             <Form.Group className="mb-3">
-              <Form.Label>Price</Form.Label>
+              <Form.Label>Price (₹)</Form.Label>
               <Form.Control
                 type="number"
                 value={newItem.price}
                 onChange={(e) => setNewItem({...newItem, price: e.target.value})}
                 required
-                min="0"
               />
             </Form.Group>
           </Col>
@@ -98,26 +66,23 @@ const MenuManagement = () => {
           <Form.Select
             value={newItem.category}
             onChange={(e) => setNewItem({...newItem, category: e.target.value})}
-            required
           >
             <option value="North Indian">North Indian</option>
             <option value="South Indian">South Indian</option>
-            <option value="Chinese">Chinese</option>
-            <option value="Continental">Continental</option>
+            <option value="Thalis">Thalis</option>
           </Form.Select>
         </Form.Group>
-        
+
         <Form.Group className="mb-3">
           <Form.Label>Description</Form.Label>
           <Form.Control
             as="textarea"
             value={newItem.description}
             onChange={(e) => setNewItem({...newItem, description: e.target.value})}
-            required
           />
         </Form.Group>
         
-        <Button type="submit" variant="primary">Add Item</Button>
+        <Button type="submit">Add Item</Button>
       </Form>
 
       <Row>
@@ -126,12 +91,14 @@ const MenuManagement = () => {
             <Card className="mb-3">
               <Card.Body>
                 <Card.Title>{item.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{item.category}</Card.Subtitle>
-                <Card.Text>₹{item.price}</Card.Text>
-                <Card.Text>{item.description}</Card.Text>
+                <Card.Text>
+                  Price: ₹{item.price}<br/>
+                  Category: {item.category}<br/>
+                  {item.description}
+                </Card.Text>
                 <Button 
                   variant="danger"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => removeMenuItem(item.id)}
                 >
                   Delete
                 </Button>
@@ -140,8 +107,7 @@ const MenuManagement = () => {
           </Col>
         ))}
       </Row>
-    </div>
+    </Container>
   );
 };
-
 export default MenuManagement;

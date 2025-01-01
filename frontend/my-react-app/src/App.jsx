@@ -1,41 +1,35 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { MenuProvider } from './contexts/MenuContext';
 import { CartProvider } from './contexts/CartContext';
-import NavbarComponent from './Components/Navbar.jsx';
-import AdminNavbar from './Components/AdminNavbar.jsx';
-import Home from './Pages/Home.jsx';
-import Menu from './Pages/Menu.jsx';
-import Cart from './Pages/Cart.jsx';
-import Login from './Pages/Login.jsx';
-import AdminDashboard from './Pages/admin/Dashboard.jsx';
-import OrderManagement from './pages/admin/OrderManagement';
-import MenuManagement from './Pages/admin/MenuManagement.jsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import TableMenu from './Pages/TableMenu';
+import TableCart from './Pages/TableCart';
+import AdminDashboard from './Pages/admin/Dashboard';
+import OrderManagement from './Pages/admin/OrderManagement';
+import MenuManagement from './Pages/admin/MenuManagement';
+import TableLogin from './pages/TableLogin';
+import AdminNav from './components/AdminNav';
 
 const App = () => {
-  var isAdmin = window.location.pathname.startsWith('/admin');
-  isAdmin=false;
-  console.log('isAdmin:', isAdmin); // Add this to check the value
+  const isAdmin = window.location.pathname.startsWith('/admin');
 
   return (
-    
     <BrowserRouter>
-      <CartProvider>
-        <div className="app">
-          {isAdmin ? <AdminNavbar /> : <NavbarComponent />}
+      <MenuProvider>
+        <CartProvider>
+          {isAdmin && <AdminNav />}
           <Routes>
-            {/* Customer Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/login" element={<Login />} />
+            {/* Table Routes */}
+            <Route path="/table/:tableId" element={<TableLogin />} />
+            <Route path="/table/:tableId/menu" element={<TableMenu />} />
+            <Route path="/table/:tableId/cart" element={<TableCart />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/orders" element={<OrderManagement />} />
             <Route path="/admin/menu" element={<MenuManagement />} />
           </Routes>
-        </div>
-      </CartProvider>
+        </CartProvider>
+      </MenuProvider>
     </BrowserRouter>
   );
 };
